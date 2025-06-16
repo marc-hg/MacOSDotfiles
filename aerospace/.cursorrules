@@ -1,0 +1,166 @@
+# AeroSpace Workspace Organization Rules
+
+## IMPORTANT: Configuration Philosophy
+
+- **NO MODES**: User prefers a simplified single main mode configuration without service modes
+- **Conflicting Apps Removed**: Rectangle was uninstalled as it conflicts with AeroSpace shortcuts
+- **Direct Key Bindings**: All shortcuts work globally in main mode, no mode switching required
+
+## Adding New Apps to Workspace Organization
+
+When the user wants to add a new app to their workspace organization system, follow these steps:
+
+### 1. Get the App Bundle ID
+
+```bash
+osascript -e 'id of app "AppName"'
+```
+
+Replace "AppName" with the exact app name as it appears in Applications folder.
+
+### 2. Update organize_apps.sh
+
+Add a new line in the "Organize each app" section:
+
+```bash
+organize_app "AppName" WORKSPACE_NUMBER "bundle.id.from.step1"
+```
+
+### 3. Update aerospace.toml
+
+Add a new [[on-window-detected]] rule:
+
+```toml
+[[on-window-detected]]
+if.app-id = 'bundle.id.from.step1'
+run = ['move-node-to-workspace WORKSPACE_NUMBER']
+```
+
+### 4. Make Script Executable (if needed)
+
+```bash
+chmod +x ~/.config/aerospace/organize_apps.sh
+```
+
+### 5. Test and Reload
+
+```bash
+# Test the script
+~/.config/aerospace/organize_apps.sh
+
+# Reload AeroSpace config
+/opt/homebrew/bin/aerospace reload-config
+```
+
+## Current App Mappings
+
+- Arc Browser → Workspace 3 (company.thebrowser.Browser)
+- Slack → Workspace 4 (com.tinyspeck.slackmacgap)
+- Obsidian → Workspace 10 (md.obsidian)
+- iTerm2 → Workspace 1 (com.googlecode.iterm2)
+- Rider → Workspace 2 (com.jetbrains.rider)
+- Cursor → Workspace 2 (com.todesktop.230313mzl4w4u92)
+
+## Key Commands (Simplified Single Mode)
+
+### Core Window Management
+
+- `Alt + F` - Toggle fullscreen
+- `Alt + M` - Toggle floating/tiling layout
+- `Alt + W` - Close current window
+- `Alt + R` - Reset layout (flatten workspace tree)
+- `Alt + Shift + W` - Close all windows except current
+
+### Navigation & Focus
+
+- `Alt + H/J/K/L` - Focus window (left/down/up/right)
+- `Alt + Shift + H/J/K/L` - Move window (left/down/up/right)
+- `Alt + [/]` - Cycle through stacked windows
+
+### Workspace Management
+
+- `Alt + 1/2/3/4/5/9/0` - Switch to workspace (1,2,3,4,5,9,10)
+- `Alt + Shift + 1/2/3/4/5/9/0` - Move window to workspace
+- `Alt + Tab` - Workspace back and forth
+
+### Layout Controls
+
+- `Alt + /` - Toggle tiles layout (horizontal/vertical)
+- `Alt + ,` - Toggle accordion layout (horizontal/vertical)
+- `Alt + Arrows` - Join/stack windows (left/down/up/right)
+
+### System & Organization
+
+- `Alt + Shift + O` - Organize apps manually
+- `Alt + Shift + R` - Reload AeroSpace and Sketchybar
+- `Alt + Shift + T` - Open Terminal
+- `Alt + N` - Open Finder/Home folder
+
+## Troubleshooting Shortcuts
+
+### If shortcuts don't work:
+
+1. **Check for conflicting apps**: Look for Rectangle, Spectacle, Magnet, etc.
+
+   ```bash
+   ps aux | grep -i "rectangle\|spectacle\|magnet" | grep -v grep
+   ```
+
+2. **Remove conflicting window managers**:
+
+   ```bash
+   # Example for Rectangle
+   pkill -f Rectangle
+   rm -rf /Applications/Rectangle.app
+   defaults delete com.knollsoft.Rectangle
+   ```
+
+3. **Verify AeroSpace is running**:
+
+   ```bash
+   aerospace list-apps
+   aerospace list-workspaces --focused
+   ```
+
+4. **Test commands manually**:
+
+   ```bash
+   aerospace fullscreen  # Should work if alt+f doesn't
+   ```
+
+5. **Reload config after changes**:
+   ```bash
+   aerospace reload-config
+   ```
+
+### Common Issues:
+
+- **Key bindings in service mode**: All bindings should be in `[mode.main.binding]` section only
+- **Rectangle conflicts**: Rectangle uses similar shortcuts - uninstall completely
+- **Bundle ID case sensitivity**: App bundle IDs must match exactly
+- **Mode confusion**: Avoid service modes - keep everything in main mode
+
+## Configuration Guidelines
+
+### When modifying aerospace.toml:
+
+- **Always add new key bindings to `[mode.main.binding]` section**
+- **Never use service modes or mode switching**
+- **Test shortcuts immediately after changes**
+- **Use `aerospace reload-config` after modifications**
+- **Prefer simple, direct key combinations**
+
+### Key Binding Patterns:
+
+- `Alt + Letter` = Core actions (focus, fullscreen, etc.)
+- `Alt + Shift + Letter` = Move/modify actions
+- `Alt + Numbers` = Workspace switching
+- `Alt + Shift + Numbers` = Move to workspace
+
+## Important Notes
+
+- Bundle IDs are case-sensitive and must be exact
+- The organize_apps.sh script uses `--monitor all` to find windows across all monitors
+- Apps are opened first, then windows are moved (handles both closed and open apps)
+- Sleep 1 second is needed to allow apps to fully open before moving windows
+- Configuration is intentionally simplified with no modes for easier management
