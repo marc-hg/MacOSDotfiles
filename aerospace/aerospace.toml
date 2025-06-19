@@ -37,7 +37,7 @@ enable-normalization-opposite-orientation-for-nested-containers = false
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 # The 'accordion-padding' specifies the size of accordion padding
 # You can set 0 to disable the padding feature
-accordion-padding = 20
+accordion-padding = 0
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -55,12 +55,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
-# Possible values:
-# - Constant:     gaps.outer.top = 8
-# - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
-#                 In this example, 24 is a default value when there is no match.
-#                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
-#                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+# All gaps set to 0 to maximize screen space
 [workspace-to-monitor-force-assignment]
 1 = 'main'
 2 = 'main'
@@ -72,12 +67,12 @@ on-focus-changed = ['move-mouse window-lazy-center']
 10 = '^EPSON'
 
 [gaps]
-inner.horizontal = 20
-inner.vertical = 20
-outer.top = [{ monitor."main" = 5 }, 5]
-outer.left = 15
-outer.bottom = [{ monitor."main" = 50 }, 50]
-outer.right = 15
+inner.horizontal = 0
+inner.vertical = 0
+outer.top = 0
+outer.left = 0
+outer.bottom = [{ monitor."main" = 40 }, 40]
+outer.right = 0
 
 # See https://nikitabobko.github.io/AeroSpace/guide#exec-env-vars
 [exec] # Again, you don't need to copy all config sections to your config.
@@ -142,6 +137,8 @@ alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 alt-shift-0 = 'move-node-to-workspace 10'
 
+
+
 # Stack window (arrows) - using join-with
 alt-left = 'join-with left'
 alt-down = 'join-with down'
@@ -152,12 +149,15 @@ alt-right = 'join-with right'
 alt-leftSquareBracket = 'focus left'
 alt-rightSquareBracket = 'focus right'
 
-# Close app (w, q)
-alt-w = 'close'
+# Layout toggles
+alt-w = 'layout accordion horizontal'  # 'layout tabbed' in i3
+alt-e = 'layout tiles horizontal vertical'  # 'layout toggle split' in i3
+
+# Close app (q)
 alt-q = 'close'
 
-# Toggle floating (m) - closest to minimize
-alt-m = 'layout floating tiling'
+# Toggle floating (alt + shift + space) - similar to i3/sway
+alt-shift-space = 'layout floating tiling'
 
 # Open folder explorer (n)
 alt-n = 'exec-and-forget open ~'
